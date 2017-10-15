@@ -63,7 +63,22 @@ function loginUser(req, res) {
 
 function deleteUser(req,res){
     if(req.user.role=='ROLE_ADMIN'){
-        res.status(200).send({message:"ES ADMIN",user:req.user})
+        
+        User.findByIdAndRemove(req.params.id).then(
+            data =>{
+                if(!data){
+                    res.status(404).send({ message: "No existe el usuario con el id proporcionado" })
+                    return
+                }else{
+                    res.status(200).send({message:"Usuario eliminado con éxito"})
+                    return
+                }
+            },
+            reject=> {res.status(500).send({message:"Error interno del sistema"});return;}
+        )
+        
+        // res.status(200).send({message:"ES ADMIN Y SE ELIMINÓ EL USER", user:req.user})
+
     }else{
         res.status(401).send({message:"NO ES ADMIN",user:req.user})
     }
